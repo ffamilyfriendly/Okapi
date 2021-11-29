@@ -9,7 +9,6 @@ pub struct Ferr {
     pub err_msg: String
 }
 
-
 impl<'r> Responder<'r, 'static> for Ferr {
     fn respond_to(self, _: &Request) -> response::Result<'static> {
         Response::build()
@@ -18,4 +17,8 @@ impl<'r> Responder<'r, 'static> for Ferr {
             .header(ContentType::new("application", "json"))
             .ok()
     }
+}
+
+pub fn json_err(msg: String, code: String) -> String {
+    return format!("{{ \"code\" : \"{}\", \"message\" : \"{}\" }}", code, msg);
 }
