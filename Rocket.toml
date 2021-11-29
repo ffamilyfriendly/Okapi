@@ -1,0 +1,6 @@
+[debug]
+port = 3000
+log = "normal"
+
+[release]
+port = 3000

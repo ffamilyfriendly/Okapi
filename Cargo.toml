@@ -1,0 +1,19 @@
+[package]
+name = "okapi"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# serde
+serde_json = "1.0.57"
+serde = { version = "1.0.115", features = ["derive"] }
+validator = { version = "0.11", features = ["derive"] }
+rmp-serde = { git = "https://github.com/3Hren/msgpack-rust", rev = "5bf2c24203ad422233cf35b7b7bfad9f7e811814" }
+
+# databases
+rusqlite = "0.26.0"
+
+# rocket
+rocket = { version = "0.5.0-rc.1", features = ["json"] }
