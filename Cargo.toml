@@ -17,3 +17,7 @@ rusqlite = "0.26.0"
 
 # rocket
 rocket = { version = "0.5.0-rc.1", features = ["json"] }
+
+# Password
+argon2 = "0.3"
+rand_core = { version = "0.6", features = ["std"] }

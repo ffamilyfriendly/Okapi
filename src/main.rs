@@ -3,6 +3,26 @@
 #[macro_use]
 extern crate rocket;
 
+use serde::{Deserialize};
+
+#[derive(Deserialize)]
+pub struct config {
+    hostname: String,
+    invite_only: bool
+}
+
+pub fn get_config() -> config {
+    let config_str = std::fs::read_to_string("./config.json");
+    if config_str.is_err() {
+        println!("could not find config.json");
+    }
+    let parsed = serde_json::from_str(&config_str.unwrap());
+    if parsed.is_err() {
+        println!("config file has faulty structure");
+    }
+    parsed.unwrap()
+}
+
 // Utils
 pub mod util;
 
@@ -11,6 +31,7 @@ mod user;
 
 #[launch]
 fn rocket() -> _ {
+
     {
         let db_connection = rusqlite::Connection::open("data.sqlite").unwrap();
 
@@ -30,5 +51,9 @@ fn rocket() -> _ {
             .unwrap();
     }
 
-    rocket::build().mount("/user", user::routes())
+    let cnf: config = get_config();
+
+    rocket::build()
+        .mount("/user", user::routes())
+        .manage(cnf)
 }
