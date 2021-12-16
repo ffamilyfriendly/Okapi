@@ -46,6 +46,14 @@ fn rocket() -> _ {
                     password	TEXT NOT NULL, /* password crypt. password will NEVER be stored plain */
                     PRIMARY KEY(id AUTOINCREMENT)
                 );
+
+                CREATE TABLE IF NOT EXISTS invites (
+                    id	TEXT NOT NULL UNIQUE,
+                    created_by	INTEGER NOT NULL, /* id of the user who created the invite */
+                    expires	INTEGER, /* unix timestamp when invite expires. If invite does not expire with time, set to -1 */
+                    uses	INTEGER, /* how many times the invite can be used. If it can be used unlimited times, set to -1 */
+                    PRIMARY KEY(id)
+                );
             COMMIT;",
             )
             .unwrap();
