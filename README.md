@@ -4,4 +4,17 @@
 
 ## Todo
 - [ ] User accounts
-    - [ ] Sign up system ( invites? )
+    - [ ] Sign up system
+      - [X] without invites
+      - [ ] with invite
+    - [ ] permissions manager
+    - [ ] remove user account
+      - [ ] as user (can only delete self)
+      - [ ] as admin (can delete anyone)
+
+- [ ] Invites
+  - [ ] generate invite
+  - [ ] use invite when signign up
+  - [ ] expired invite
+  - [ ] limited uses invite
+  - [ ] delete invite
