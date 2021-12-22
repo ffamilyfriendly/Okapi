@@ -43,7 +43,7 @@ pub fn login(input: Json<UserLogin>) -> Result<String, util::ferr::Ferr> {
     };
 
     if Argon2::default().verify_password(&input.password.as_bytes(), &hash).is_ok() {
-        return Ok(user::userutil::genToken(&curr_user.claim));
+        return Ok(user::userutil::gen_token(&curr_user.claim));
     } else {
         return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(401), err_msg: "Unauthorized".to_string() })
     }    

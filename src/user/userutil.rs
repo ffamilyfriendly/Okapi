@@ -9,7 +9,7 @@ pub struct Claims {
     pub sub: String, /* subject (email) */
     /* okapi specific properties */
     pub uid: u16, /* User id */
-    pub permissions: u8 /* u8 int leaves us with 255 diff perms / flags. Should be plenty */
+    pub permissions: u16 /* u16 int leaves us with 16 diff perms / flags. Should be enough */
 }
 
 impl std::convert::From<&str> for Claims {
@@ -26,7 +26,7 @@ pub struct CoolStructThing {
 
 pub fn get_cool_struct_thing(row: &rusqlite::Row<'_>) -> Result<CoolStructThing, rusqlite::Error> {
     let uid: u16 = row.get(0)?;
-    let flag: u8 = row.get(1).unwrap_or(0);
+    let flag: u16 = row.get(1).unwrap_or(0);
     let email: String = row.get(3)?;
     let pswd: String = row.get(4)?;
     //                                                                            #    about half a year     #
@@ -36,7 +36,7 @@ pub fn get_cool_struct_thing(row: &rusqlite::Row<'_>) -> Result<CoolStructThing,
     Ok(CoolStructThing { claim: claim, token: pswd })
 }
 
-pub fn genToken(user: &Claims) -> String {
+pub fn gen_token(user: &Claims) -> String {
     let token = encode(&Header::new(Algorithm::default()), user, &EncodingKey::from_secret(include_bytes!("secret.txt")));
     token.unwrap()
 }

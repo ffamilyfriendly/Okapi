@@ -8,13 +8,18 @@
       - [X] without invites
       - [ ] with invite
     - [ ] permissions manager
-    - [ ] remove user account
-      - [ ] as user (can only delete self)
-      - [ ] as admin (can delete anyone)
+      - [X] parse permissions
+      - [ ] set permissions
+    - [X] remove user account
+      - [X] as user (can only delete self)
+      - [X] as admin (can delete anyone)
+    - [ ] revoke access token
+    - [ ] update access token
 
 - [ ] Invites
-  - [ ] generate invite
+  - [X] generate invite
   - [ ] use invite when signign up
   - [ ] expired invite
   - [ ] limited uses invite
   - [ ] delete invite
+  - [ ] give perms to user (make sure perms does not exceed those of the author of the invite)

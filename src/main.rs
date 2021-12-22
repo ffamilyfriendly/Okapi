@@ -26,7 +26,8 @@ pub fn get_config() -> config {
 // Utils
 pub mod util;
 
-mod user;
+pub mod user;
+mod invite;
 //mod content;
 
 #[launch]
@@ -50,6 +51,7 @@ fn rocket() -> _ {
                 CREATE TABLE IF NOT EXISTS invites (
                     id	TEXT NOT NULL UNIQUE,
                     created_by	INTEGER NOT NULL, /* id of the user who created the invite */
+                    user_flag INTEGER, /* gives user these perms after signup */
                     expires	INTEGER, /* unix timestamp when invite expires. If invite does not expire with time, set to -1 */
                     uses	INTEGER, /* how many times the invite can be used. If it can be used unlimited times, set to -1 */
                     PRIMARY KEY(id)
@@ -63,5 +65,6 @@ fn rocket() -> _ {
 
     rocket::build()
         .mount("/user", user::routes())
+        .mount("/invite", invite::routes())
         .manage(cnf)
 }

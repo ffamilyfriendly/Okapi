@@ -42,13 +42,14 @@ pub fn new_user(state: &State<crate::config> ,input: Json<NewUser>) -> Result<Cr
     input.validate().map_err(util::validate::verify_respond)?;
     
     if state.inner().invite_only && input.invite.is_none() {
-        return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(403), err_msg: "invite only".into() })
+        return Err(util::ferr::q_err(403, &util::ferr::json_err("invite only. Provide an invite code".into(), "inviteonly".into())))
     }
+
 
     // Establish db connection
     let con = match Connection::open("data.sqlite") {
         Ok(connection) => connection, // Established!
-        Err(_) => return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(500), err_msg: "db fail idk".to_string() })
+        Err(_) => return Err(util::ferr::q_err(500, "db fail idk"))
         // ^^^ could not establish; tell user in a very helpfull way that something done goofed
     };
 

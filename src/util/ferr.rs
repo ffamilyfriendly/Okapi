@@ -22,3 +22,7 @@ impl<'r> Responder<'r, 'static> for Ferr {
 pub fn json_err(msg: String, code: String) -> String {
     return format!("{{ \"code\" : \"{}\", \"message\" : \"{}\" }}", code, msg);
 }
+
+pub fn q_err(code: u16, msg: &str) -> Ferr {
+    Ferr { err_type: Status::new(code), err_msg: msg.to_string() }
+}
