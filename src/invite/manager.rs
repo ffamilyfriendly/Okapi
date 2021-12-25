@@ -1,5 +1,6 @@
 use rusqlite::{Connection};
 use rand_core::{ OsRng, RngCore };
+use serde::{Deserialize, Serialize};
 
 fn gen_id() -> String {
     let mut key = [0u8; 16];
@@ -19,6 +20,7 @@ fn gen_id() -> String {
                 );
 */
 
+#[derive(Serialize, Deserialize)]
 pub struct Invite {
     pub id: String,
     pub created_by: u16,
@@ -28,10 +30,6 @@ pub struct Invite {
 }
 
 impl Invite {
-
-    fn me(self) -> Invite {
-        self
-    }
 
     pub fn Use(&mut self) {
         self.uses -= 1;
