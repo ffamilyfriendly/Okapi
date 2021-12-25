@@ -1,5 +1,5 @@
 //extern crate argon2;
-use crate::{util,config};
+use crate::{util,config,invite};
 use rocket::State;
 use rocket::response::status::{Created};
 use rocket::serde::json::Json;
@@ -37,12 +37,28 @@ pub fn hash_password(psw: &String) -> Result<String,argon2::password_hash::Error
 }
 
 #[post("/", data = "<input>")]
-pub fn new_user(state: &State<crate::config> ,input: Json<NewUser>) -> Result<Created<String>, util::ferr::Ferr> {
+pub fn new_user(state: &State<config> ,input: Json<NewUser>) -> Result<Created<String>, util::ferr::Ferr> {
     // Validates the request. If fields does not satisfy validation tell client to fix their shit
     input.validate().map_err(util::validate::verify_respond)?;
     
     if state.inner().invite_only && input.invite.is_none() {
         return Err(util::ferr::q_err(403, &util::ferr::json_err("invite only. Provide an invite code".into(), "inviteonly".into())))
+    }
+
+    let mut user_flag: u16 = 0;
+
+    if input.invite.is_some() {
+        match invite::manager::get_invite(&input.invite.as_ref().unwrap()) {
+            Some(mut inv) => {
+                user_flag = inv.user_flag;
+                inv.Use();
+            },
+            None => {
+                if state.inner().invite_only {
+                    return Err(util::ferr::q_err(403, "invalid invite code"))
+                }
+            }
+        }
     }
 
 
@@ -58,7 +74,7 @@ pub fn new_user(state: &State<crate::config> ,input: Json<NewUser>) -> Result<Cr
     if !hash.is_ok() { return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(500), err_msg: "could not generate password hash".into() }) }
 
     // insert new user into db
-    match con.execute("INSERT INTO users (email, username, password) VALUES (?, ?, ?) ", [ &input.email, &input.username, &hash.unwrap() ]) {
+    match con.execute("INSERT INTO users (email, username, password, flag) VALUES (?, ?, ?, ?) ", [ &input.email, &input.username, &hash.unwrap(), &user_flag.to_string() ]) {
         Ok(_) => return Ok(Created::new(format!("{}/user/me", &state.inner().hostname))), // User created! Might instead resolve to login page
         // vvv something went wrong when creating account. Normally this might be UNIQUE constraint on email col failing, otherwise assume server err
         Err(e) => return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(500), err_msg: match e.to_string().as_str() {

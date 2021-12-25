@@ -27,7 +27,7 @@ pub fn get_config() -> config {
 pub mod util;
 
 pub mod user;
-mod invite;
+pub mod invite;
 //mod content;
 
 #[launch]
