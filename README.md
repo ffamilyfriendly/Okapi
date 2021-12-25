@@ -4,9 +4,9 @@
 
 ## Todo
 - [ ] User accounts
-    - [ ] Sign up system
+    - [X] Sign up system
       - [X] without invites
-      - [ ] with invite
+      - [X] with invite
     - [ ] permissions manager
       - [X] parse permissions
       - [ ] set permissions
@@ -16,10 +16,10 @@
     - [ ] revoke access token
     - [ ] update access token
 
-- [ ] Invites
+- [X] Invites
   - [X] generate invite
-  - [ ] use invite when signign up
-  - [ ] expired invite
-  - [ ] limited uses invite
-  - [ ] delete invite
-  - [ ] give perms to user (make sure perms does not exceed those of the author of the invite)
+  - [X] use invite when signign up
+  - [X] expired invite
+  - [X] limited uses invite
+  - [X] delete invite
+  - [X] give perms to user (make sure perms does not exceed those of the author of the invite)

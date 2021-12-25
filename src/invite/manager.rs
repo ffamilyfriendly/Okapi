@@ -1,6 +1,7 @@
 use rusqlite::{Connection};
 use rand_core::{ OsRng, RngCore };
 use serde::{Deserialize, Serialize};
+use std::time::{ SystemTime, UNIX_EPOCH };
 
 fn gen_id() -> String {
     let mut key = [0u8; 16];
@@ -82,8 +83,17 @@ pub fn get_invite(id: &String) -> Option<Invite> {
         Err(_) => return None
     };
 
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs_f64();
+
     match connection.query_row("SELECT * FROM invites WHERE id = ?", [&id], |r| get_invite_struct(r)) {
-        Ok(r) => Some(r),
+        Ok(r) => {
+
+            if r.expires > 0 && r.expires < now as u64 {
+                return None;
+            }
+            
+            return Some(r);
+        },
         Err(_) => None
     }
 }
