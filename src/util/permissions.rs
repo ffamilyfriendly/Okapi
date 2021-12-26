@@ -1,7 +1,8 @@
 pub enum UserPermissions {
     Administrator = 1 << 0,
     GenerateInvite = 1 << 1,
-    PrivateContent = 1 << 2
+    PrivateContent = 1 << 2,
+    ManageContent = 1 << 3
 }
 
 pub fn has_permission(p: u16, perm: UserPermissions) -> bool {

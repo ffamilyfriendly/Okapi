@@ -23,3 +23,10 @@
   - [X] limited uses invite
   - [X] delete invite
   - [X] give perms to user (make sure perms does not exceed those of the author of the invite)
+
+The content title below will be very generic and will in reality be multiple different entities but for the sake of simplicity I'll keep one abstract main checklist for content as a whole
+
+figma board for general data structure: https://www.figma.com/file/NIEsEIonhqf0VZlX8PiGa5/Okapi-Content?node-id=0%3A1
+
+
+- [ ] Content
