@@ -28,6 +28,7 @@ pub mod util;
 
 pub mod user;
 pub mod invite;
+pub mod content;
 //mod content;
 
 #[launch]
@@ -56,6 +57,39 @@ fn rocket() -> _ {
                     uses	INTEGER, /* how many times the invite can be used. If it can be used unlimited times, set to -1 */
                     PRIMARY KEY(id)
                 );
+
+                CREATE TABLE IF NOT EXISTS entities (
+                    id	TEXT NOT NULL UNIQUE,
+                    parent	TEXT,
+                    next    TEXT,
+                    flag	INTEGER NOT NULL,
+                    type	TEXT NOT NULL,
+                    creator_uid	INTEGER NOT NULL,
+                    position	INTEGER,
+                    PRIMARY KEY(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS metadata (
+                    id	TEXT NOT NULL UNIQUE,
+                    thumbnail	TEXT,
+                    banner	TEXT,
+                    description	TEXT,
+                    name	TEXT,
+                    rating	INTEGER,
+                    age_rating	TEXT,
+                    language	TEXT,
+                    year	INTEGER,
+                    PRIMARY KEY(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS sources (
+                    id	TEXT NOT NULL UNIQUE,
+                    parent	TEXT NOT NULL,
+                    path	TEXT NOT NULL,
+                    position	INTEGER,
+                    PRIMARY KEY(id)
+                );
+
             COMMIT;",
             )
             .unwrap();
@@ -66,5 +100,6 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/user", user::routes())
         .mount("/invite", invite::routes())
+        .mount("/content", content::routes())
         .manage(cnf)
 }

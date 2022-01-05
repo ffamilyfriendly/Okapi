@@ -1,14 +1,7 @@
 use rusqlite::{Connection};
-use rand_core::{ OsRng, RngCore };
 use serde::{Deserialize, Serialize};
 use std::time::{ SystemTime, UNIX_EPOCH };
-
-fn gen_id() -> String {
-    let mut key = [0u8; 16];
-    OsRng.fill_bytes(&mut key);
-    let random_u64 = OsRng.next_u64();
-    random_u64.to_string()
-}
+use crate::util::gen_id::{gen_id};
 
 /*
                 CREATE TABLE IF NOT EXISTS invites (
@@ -31,7 +24,6 @@ pub struct Invite {
 }
 
 impl Invite {
-
     pub fn Use(&mut self) {
         self.uses -= 1;
 
