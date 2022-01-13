@@ -22,7 +22,7 @@ pub fn new_content(state: &State<crate::config>, user: Token, input: Json<Entity
     }
 
     let next = input.next.as_ref().unwrap_or(&"".to_string()).to_string();
-    let parent = input.parent.as_ref().unwrap_or(&"".to_string()).to_string();
+    let parent = input.parent.as_ref().unwrap_or(&"root".to_string()).to_string();
     let entity_type: manager::EntityType = (&input.entity_type).into();
 
     let ent = match manager::generate_entity(input.flag, entity_type, user.0.uid, input.position, Some(parent), Some(next)) {

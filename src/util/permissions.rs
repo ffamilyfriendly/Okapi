@@ -36,3 +36,11 @@ pub fn has_all_permissions(p: u16, perms: Vec<UserPermissions>) -> bool {
     }
     rv
 }
+
+pub fn remove_permission(p: u16, perm: UserPermissions) -> u16 {
+    p & !(1 << (perm as u16))
+}
+
+pub fn add_permission(p: u16, perm: UserPermissions) -> u16 {
+    p | 1 << (perm as u16)
+}

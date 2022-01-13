@@ -2,7 +2,15 @@ use rocket::Route;
 pub mod manager;
 pub mod new_content;
 pub mod get_content;
+pub mod delete_content;
 
 pub fn routes() -> Vec<Route> {
-    routes![new_content::new_content, new_content::new_metadata, new_content::new_source, get_content::get_content]
+    routes![
+        // Creation of content
+        new_content::new_content, new_content::new_metadata, new_content::new_source,
+        // Get content
+        get_content::get_content, get_content::get_multiple, get_content::get_sources,
+        // Deletion of content
+        delete_content::delete_entity, delete_content::delete_metadata, delete_content::delete_source, delete_content::delete_sources
+    ]
 }

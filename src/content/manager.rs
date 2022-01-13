@@ -209,10 +209,51 @@ pub fn get_collection(id: String, public: bool) -> Option<Entity> {
     Some(ent)
 }
 
+fn get_id_row(row: &rusqlite::Row<'_>) -> Result<String, rusqlite::Error> {
+    Ok(row.get(0)?)
+}
+
+pub fn get_collection_list(parent: &str, public: bool) -> Result<Vec<Entity>, rusqlite::Error> {
+    let mut rv: Vec<Entity> = Vec::new();
+
+    let con = match get_conn() {
+        Ok(c) => c,
+        Err(e) => return Err(e)
+    };
+
+    let mut sql: String = "SELECT id FROM entities WHERE parent = ?".to_string();
+    if public { sql += " AND flag & 1 << 0 != 1 << 0"; };
+
+    let mut statement = match con.prepare(&sql) {
+        Ok(r) => r,
+        Err(e) => return Err(e)
+    };
+    
+    let source_iter = match statement.query_map([parent], |row| get_id_row(row)) {
+        Ok(r) => r,
+        Err(e) => return Err(e)
+    };
+
+    for source in source_iter {
+        match source {
+            Ok(s) => {
+                match get_collection(s, public) {
+                    Some(col) => rv.push(col),
+                    None => { }
+                }
+            },
+            Err(_) => {  }
+        };
+    }
+
+    Ok(rv)
+}
+
 // DELETE
 fn generic_delete(table: &str, id: &str) -> Result<bool, rusqlite::Error> {
     let con = get_conn()?;
-    con.execute("DELETE FROM ? WHERE id = ?", [table, id])?;
+    // the below might be dangerous however only the calls below use this functions where the table is hardcoded. No user input can change variable "table"
+    con.execute(&format!("DELETE FROM {} WHERE id = ?", table), [id])?;
     Ok(true)
 }
 
@@ -232,6 +273,13 @@ pub fn delete_source(id: &str) -> Result<bool, rusqlite::Error> {
 
 pub fn delete_entity(id: &str) -> Result<bool, rusqlite::Error> {
     Ok(generic_delete("entities", id)?)
+}
+
+pub fn delete_collection(id: &str) -> Result<bool, rusqlite::Error> {
+    delete_entity(id)?;
+    delete_metadata(id)?;
+    delete_sources(id)?;
+    Ok(true)
 }
 
 // GENERATE
