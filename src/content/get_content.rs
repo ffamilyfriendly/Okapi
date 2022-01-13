@@ -51,3 +51,19 @@ pub fn get_sources(user: Option<Token>, parent: String) -> Result<Json<Vec<manag
         None => Ok(vec![].into())
     }
 }
+
+#[get("/search?<name>&<description>&<entity_type>")]
+pub fn search_collections(user: Option<Token>, name: Option<String>, description: Option<String>, entity_type: Option<String>) -> Result<Json<Vec<manager::Entity>>, ferr::Ferr> {
+    let public: bool = match user.is_some() {
+        true => {
+            let t = user.unwrap();
+            !permissions::has_permission(t.0.permissions, permissions::UserPermissions::PrivateContent)
+        },
+        false => true
+    };
+
+    match manager::search_collection(name, description, entity_type, public) {
+        Ok(v) => Ok(v.into()),
+        Err(e) => Err(ferr::q_err(500, &e.to_string()))
+    }
+}

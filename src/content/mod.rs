@@ -12,7 +12,7 @@ pub fn routes() -> Vec<Route> {
         // Editing of content
         edit_content::edit_entity, edit_content::edit_metadata, edit_content::edit_source,
         // Get content
-        get_content::get_content, get_content::get_multiple, get_content::get_sources,
+        get_content::get_content, get_content::get_multiple, get_content::get_sources, get_content::search_collections,
         // Deletion of content
         delete_content::delete_entity, delete_content::delete_metadata, delete_content::delete_source, delete_content::delete_sources
     ]

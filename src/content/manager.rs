@@ -85,6 +85,52 @@ fn get_conn() -> Result<Connection, rusqlite::Error> {
     This task is quite daunting as a lot needs to go right. Also have to figure out how the fuck to treat series.
 */
 
+// Sourch
+pub fn search_collection(name: Option<String>, description: Option<String>, entity_type: Option<String>, public: bool) -> Result<Vec<Entity>, rusqlite::Error> {
+    let con = get_conn()?;
+    let sql: String = "SELECT id FROM metadata WHERE name LIKE ? || '%' OR description LIKE ? || '%'".to_string();
+
+    let name_param: String = match name {
+        Some(n) => n,
+        None => "NULL".to_string()
+    };
+
+    let description_param: String = match description {
+        Some(n) => n,
+        None => "NULL".to_string()
+    };
+
+    let mut statement = match con.prepare(&sql) {
+        Ok(r) => r,
+        Err(e) => return Err(e)
+    };
+
+    let source_iter = match statement.query_map([ &name_param, &description_param ], |row| { row.get(0) }) {
+        Ok(r) => r,
+        Err(e) => return Err(e)
+    };
+    
+    let mut sources: Vec<Entity> = Vec::new();
+
+    for source in source_iter {
+        match source {
+            Ok(s) => {
+                match get_collection(s, public) {
+                    Some(e) => {
+                        if entity_type.is_some() {
+                            if entity_type.clone().unwrap_or("".to_string()) == e.entity_type.to_string() { sources.push(e) }
+                        } else { sources.push(e); }
+                    },
+                    None => { }
+                };
+            },
+            Err(_) => {  }
+        };
+    }
+
+    Ok(sources)
+}
+
 // GET
 
 fn get_source_struct(row: &rusqlite::Row<'_>) -> Result<Source, rusqlite::Error> {

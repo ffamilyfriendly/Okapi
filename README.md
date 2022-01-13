@@ -36,7 +36,7 @@
       - [X] getting
       - [X] deletion
       - [X] editing
-    - [ ] Metadata
+    - [X] Metadata
       - [X] creation
       - [ ] ~~getting~~ *I see no need for this endpoint as you get the metadata thru the entity endpoint anyhow*
       - [X] deletion
@@ -46,10 +46,10 @@
       - [X] getting
       - [X] deletion
       - [X] editing
-  - [ ] Search
-    - [ ] entity
-    - [ ] metadata
-    - [ ] combined
+  - [X] Search
+    - [X] entity
+    - [X] metadata
+    - [X] combined
   - File transfer 
     - [ ] send file
     - [ ] send partials
