@@ -24,23 +24,32 @@
   - [X] delete invite
   - [X] give perms to user (make sure perms does not exceed those of the author of the invite)
 
+- [ ] Watch History (per user)
+  - [ ] keep track of current time for entity
+  - [ ] remove current time for entity
+  - [ ] store session(s)? start time -> end time
+
 - Content
   - Base Types
-    - [ ] Entity
+    - [X] Entity
       - [X] creation
       - [X] getting
       - [X] deletion
-      - [ ] editing
+      - [X] editing
     - [ ] Metadata
       - [X] creation
-      - ~~[ ] getting~~ *I see no need for this endpoint as you get the metadata thru the entity endpoint anyhow*
+      - [ ] ~~getting~~ *I see no need for this endpoint as you get the metadata thru the entity endpoint anyhow*
       - [X] deletion
-      - [ ] editing
-    - [ ] Sources
+      - [X] editing
+    - [X] Sources
       - [X] creation
       - [X] getting
       - [X] deletion
-      - [ ] editing
+      - [X] editing
+  - [ ] Search
+    - [ ] entity
+    - [ ] metadata
+    - [ ] combined
   - File transfer 
     - [ ] send file
     - [ ] send partials

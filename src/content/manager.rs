@@ -174,6 +174,18 @@ pub fn get_sources(id: String) -> Option<Vec<Source>> {
     return Some(sources);
 }
 
+pub fn get_source(id: String) -> Option<Source> {
+    let con = match get_conn() {
+        Ok(c) => c,
+        Err(_) => return None
+    };
+
+    match con.query_row("SELECT * FROM sources WHERE id = ?", [id], |row| get_source_struct(row)) {
+        Ok(e) => Some(e),
+        Err(_) => None
+    }
+}
+
 pub fn get_public_entity(id: String) -> Option<Entity> {
     let con = match get_conn() {
         Ok(c) => c,
@@ -319,6 +331,31 @@ pub fn generate_entity(flag: u16, entity_type: EntityType, creator_uid: u16, pos
                 }
             )
         },
+        Err(e) => Err(e)
+    }
+}
+
+// EDIT
+pub fn edit_entity(id: &String, flag: u16, position: u16, parent: &String, next: &String) -> Result<bool, rusqlite::Error> {
+    let con = get_conn()?;
+    match con.execute("UPDATE entities SET parent = ?, next = ?, flag = ?, position = ? WHERE id = ?", [parent, next, &flag.to_string(), &position.to_string(), id]) {
+        Ok(_) => Ok(true),
+        Err(e) => Err(e)
+    }
+}
+
+pub fn edit_metadata(id: &String, thumbnail: &String, banner: &String, description: &String, name: &String, rating: f32, age_rating: &String, language: &String, year: u16) -> Result<bool, rusqlite::Error> {
+    let con = get_conn()?;
+    match con.execute("UPDATE metadata SET thumbnail = ?, banner = ?, description = ?, name = ?, rating = ?, age_rating = ?, language = ?, year = ? WHERE id = ?", [thumbnail, banner, description, name, &rating.to_string(), age_rating, language, &year.to_string(), id]) {
+        Ok(_) => Ok(true),
+        Err(e) => Err(e)
+    }
+}
+
+pub fn edit_source(id: &String, parent: &str, path: &str, position: u16) -> Result<bool, rusqlite::Error> {
+    let con = get_conn()?;
+    match con.execute("UPDATE sources SET parent = ?, path = ?, position = ? WHERE id = ?", [parent, path, &position.to_string(), id]) {
+        Ok(_) => Ok(true),
         Err(e) => Err(e)
     }
 }
