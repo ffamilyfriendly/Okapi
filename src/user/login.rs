@@ -1,5 +1,6 @@
 //extern crate argon2;
 use crate::{util};
+use crate::user;
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
@@ -18,8 +19,6 @@ pub struct UserLogin {
     #[validate(length(min = 5, message = "your password must be 5 characters or longer"))]
     password: String,
 }
-
-use crate::user;
 
 #[post("/login", data = "<input>")]
 pub fn login(input: Json<UserLogin>) -> Result<String, util::ferr::Ferr> {
@@ -43,7 +42,13 @@ pub fn login(input: Json<UserLogin>) -> Result<String, util::ferr::Ferr> {
     };
 
     if Argon2::default().verify_password(&input.password.as_bytes(), &hash).is_ok() {
-        return Ok(user::userutil::gen_token(&curr_user.claim));
+
+        let token: String = user::userutil::gen_token(&curr_user.claim);
+        match user::manager::reg_session(token.clone(), curr_user.claim.uid) {
+            Ok(_) => { },
+            Err(_) => return Err(util::ferr::q_err(500, "could not register session"))
+        };
+        return Ok(token);
     } else {
         return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(401), err_msg: "Unauthorized".to_string() })
     }    

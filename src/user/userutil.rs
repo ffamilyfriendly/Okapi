@@ -1,6 +1,7 @@
 use serde::{ Serialize, Deserialize };
 use jsonwebtoken::{ encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey };
 use std::time::{ SystemTime, UNIX_EPOCH };
+use crate::user;
 
 /* User JWT struct */
 #[ derive(Serialize, Deserialize) ]
@@ -43,7 +44,7 @@ pub fn gen_token(user: &Claims) -> String {
 
 pub fn passes(token: String) -> bool {
     match decode::<Claims>(&token, &DecodingKey::from_secret(include_bytes!("secret.txt")), &Validation::default()) {
-        Ok(_) => true,
+        Ok(_) => user::manager::is_valid_session(token.clone()),
         Err(_) => false
     }
 }

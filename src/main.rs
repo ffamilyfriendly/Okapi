@@ -90,6 +90,13 @@ fn rocket() -> _ {
                     PRIMARY KEY(id)
                 );
 
+                CREATE TABLE IF NOT EXISTS sessions (
+                    token TEXT NOT NULL UNIQUE,
+                    user INTEGER NOT NULL,
+                    created TEXT NOT NULL,
+                    PRIMARY KEY(token)
+                );
+
             COMMIT;",
             )
             .unwrap();

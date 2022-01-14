@@ -1,7 +1,7 @@
 use crate::util::{ ferr, permissions };
 use crate::user::userutil::Token;
+use crate::user::manager;
 use rocket::response::status::NoContent;
-use rusqlite::Connection;
 
 
 #[delete("/<id>")]
@@ -10,13 +10,8 @@ pub fn delete_user(id: u16, user: Token) -> Result<NoContent, ferr::Ferr> {
         return Err(ferr::q_err(403, "You cannot delete that account. You need to be the account owner or have Administrator permissions"));
     }
 
-    let connection = match Connection::open("data.sqlite") {
-        Ok(con) => con,
-        Err(_) => return Err(ferr::q_err(500, "something went wrong"))
-    };
-
-    match connection.execute("DELETE FROM users WHERE id = ?", [&id]) {
+    match manager::delete_user(id) {
         Ok(_) => Ok(NoContent),
-        Err(_) => return Err(ferr::q_err(500, "something went wrong"))
+        Err(_) => Err(ferr::q_err(500, "something went wrong"))
     }
 }

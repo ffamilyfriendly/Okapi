@@ -3,18 +3,18 @@
 > Video/audio streaming service backend written in rust! As seems to be a yearly tradition for me I am once again rewriting my old streaming service backend ([armadillo](https://github.com/ffamilyfriendly/armadillo/)) that was a rewrite of my earliest streaming service backend ([bruh](https://github.com/ffamilyfriendly/bruh)). 
 
 ## Todo
-- [ ] User accounts
+- [X] User accounts
     - [X] Sign up system
       - [X] without invites
       - [X] with invite
-    - [ ] permissions manager
+    - [X] permissions manager
       - [X] parse permissions
-      - [ ] set permissions
+      - [X] set permissions
     - [X] remove user account
       - [X] as user (can only delete self)
       - [X] as admin (can delete anyone)
-    - [ ] revoke access token
-    - [ ] update access token
+    - [X] revoke access token
+    - [X] update access token
 
 - [X] Invites
   - [X] generate invite
@@ -24,6 +24,7 @@
   - [X] delete invite
   - [X] give perms to user (make sure perms does not exceed those of the author of the invite)
 
+*below postponed until working player on frontend*
 - [ ] Watch History (per user)
   - [ ] keep track of current time for entity
   - [ ] remove current time for entity
