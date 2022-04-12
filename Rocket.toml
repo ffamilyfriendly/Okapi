@@ -1,6 +1,8 @@
 [debug]
+address = "0.0.0.0"
 port = 3000
-log = "normal"
+log_level = "normal"
 
 [release]
+address = "localhost"
 port = 3000

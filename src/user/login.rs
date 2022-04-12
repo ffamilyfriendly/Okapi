@@ -28,17 +28,17 @@ pub fn login(input: Json<UserLogin>) -> Result<String, util::ferr::Ferr> {
     // Establish db connection
     let con = match Connection::open("data.sqlite") {
         Ok(connection) => connection, // Established!
-        Err(_) => return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(500), err_msg: "db fail idk".to_string() })
+        Err(_) => return Err(util::ferr::q_err(500, "db failed"))
     };
 
     let curr_user: user::userutil::CoolStructThing = match con.query_row("SELECT * FROM users WHERE email = ?", [&input.email], |row| user::userutil::get_cool_struct_thing(&row) ) {
         Ok(v) => v,
-        Err(_) => return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(401), err_msg: "Unauthorized".to_string() })
+        Err(_) => return Err(util::ferr::q_err(401, "Unauthorized"))
     };
 
     let hash: PasswordHash = match PasswordHash::new(&curr_user.token) {
         Ok(v) => v,
-        _ => return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(500), err_msg: "could not generate hash".to_string() })
+        _ => return Err(util::ferr::q_err(500, "could not generate hash"))
     };
 
     if Argon2::default().verify_password(&input.password.as_bytes(), &hash).is_ok() {
@@ -48,8 +48,8 @@ pub fn login(input: Json<UserLogin>) -> Result<String, util::ferr::Ferr> {
             Ok(_) => { },
             Err(_) => return Err(util::ferr::q_err(500, "could not register session"))
         };
-        return Ok(token);
+        return Ok(util::ferr::json_err(token, "Authorized".to_string()));
     } else {
-        return Err(util::ferr::Ferr { err_type: rocket::http::Status::new(401), err_msg: "Unauthorized".to_string() })
+        return Err(util::ferr::q_err(401, "Unauthorized"))
     }    
 }

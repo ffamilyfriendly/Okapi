@@ -3,15 +3,15 @@
 #[macro_use]
 extern crate rocket;
 
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize)]
-pub struct config {
+#[derive(Deserialize, Serialize)]
+pub struct Config {
     hostname: String,
     invite_only: bool
 }
 
-pub fn get_config() -> config {
+pub fn get_config() -> Config {
     let config_str = std::fs::read_to_string("./config.json");
     if config_str.is_err() {
         println!("could not find config.json");
@@ -23,6 +23,13 @@ pub fn get_config() -> config {
     parsed.unwrap()
 }
 
+use rocket::serde::json::Json;
+
+#[get("/")]
+pub fn get_config_http() -> Json<Config> {
+    get_config().into()
+}
+
 // Utils
 pub mod util;
 
@@ -30,6 +37,9 @@ pub mod user;
 pub mod invite;
 pub mod content;
 //mod content;
+
+// cors
+mod cors;
 
 #[launch]
 fn rocket() -> _ {
@@ -102,11 +112,13 @@ fn rocket() -> _ {
             .unwrap();
     }
 
-    let cnf: config = get_config();
+    let cnf: Config = get_config();
 
     rocket::build()
+        .mount("/", routes![get_config_http])
         .mount("/user", user::routes())
         .mount("/invite", invite::routes())
         .mount("/content", content::routes())
+        .attach(cors::CORS)
         .manage(cnf)
 }

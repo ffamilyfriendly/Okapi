@@ -22,6 +22,11 @@ pub fn reg_session(token: String, user: u16) -> Result<usize, rusqlite::Error> {
     con.execute("INSERT INTO sessions(token, user, created) VALUES(?, ?, ?)", [ token, user.to_string(), date_now_string() ])
 }
 
+pub fn dereg_session(token: String) -> Result<usize, rusqlite::Error> {
+    let con = get_conn()?;
+    con.execute("DELETE FROM sessions WHERE token = ?", [ token ])
+}
+
 pub fn clear_all_by_user(user: u16) -> Result<usize, rusqlite::Error> {
     let con = get_conn()?;
     con.execute("DELETE FROM sessions WHERE user = ?", [ user ])

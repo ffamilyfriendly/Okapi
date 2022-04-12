@@ -104,3 +104,37 @@ pub fn generate_invite(created_by: u16, user_flag: u16, expires: u64, uses: i16)
         Err(_) => Err(false)
     }
 }
+
+// this is copied from the users thing
+pub fn get_invites(creator: Option<u16>) -> Result<Vec<Invite>, rusqlite::Error> {
+    let con = match Connection::open("data.sqlite") {
+        Ok(con) => con,
+        Err(e) => { return Err(e) }
+    };
+
+    let mut sql: String = "SELECT * FROM invites".to_string();
+    if creator.is_some() { sql += &format!(" WHERE created_by = {}", creator.unwrap_or(0)).to_string(); };
+
+    let mut statement = match con.prepare(sql.as_str()) {
+        Ok(r) => r,
+        Err(e) => return Err(e)
+    };
+    
+    let user_iter = match statement.query_map([], |row| get_invite_struct(row)) {
+        Ok(r) => r,
+        Err(e) => return Err(e)
+    };
+
+    let mut users: Vec<Invite> = Vec::new();
+
+    for user in user_iter {
+        match user {
+            Ok(s) => {
+                users.push(s)
+            },
+            Err(e) => return Err(e)
+        };
+    };
+
+    Ok(users)
+}

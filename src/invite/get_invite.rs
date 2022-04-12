@@ -1,6 +1,7 @@
-use crate::util::{ ferr };
+use crate::util::{ ferr, permissions };
 use crate::invite::manager;
 use rocket::serde::json::Json;
+use crate::user::userutil::Token;
 
 #[get("/<id>")]
 pub fn get_invite(id: String) -> Result<Json<manager::Invite>, ferr::Ferr > {
@@ -10,4 +11,15 @@ pub fn get_invite(id: String) -> Result<Json<manager::Invite>, ferr::Ferr > {
     };
 
     Ok(inv.into())
+}
+
+#[get("/all/all")]
+pub fn get_invites(user: Token) -> Result<Json<Vec<manager::Invite>>, ferr::Ferr > {
+    match manager::get_invites(match permissions::has_permission(user.0.permissions, permissions::UserPermissions::Administrator) {
+        true => None,
+        false => Some(user.0.uid)
+    }) {
+        Ok(v) => Ok(v.into()),
+        Err(_) => Err(ferr::q_err(500, "something went wrong"))
+    }
 }

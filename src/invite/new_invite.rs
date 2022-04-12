@@ -1,6 +1,5 @@
 use crate::user::userutil::{ Token };
 use crate::util::{ permissions, ferr };
-use rocket::response::status::Created;
 use serde::{Deserialize, Serialize};
 use rocket::serde::json::Json;
 use rocket::State;
@@ -12,8 +11,13 @@ pub struct NewInvite {
     uses: Option<i16>
 }
 
+#[derive(Serialize)]
+pub struct CreatedInvite {
+    url: String
+}
+
 #[post("/", data="<input>")]
-pub fn new_invite(state: &State<crate::config>, user: Token, input: Json<NewInvite>) -> Result<Created<String>, ferr::Ferr> {
+pub fn new_invite(state: &State<crate::Config>, user: Token, input: Json<NewInvite>) -> Result<Json<CreatedInvite>, ferr::Ferr> {
     if !permissions::has_permission(user.0.permissions, permissions::UserPermissions::GenerateInvite) {
         return Err(ferr::q_err(403, "endpoint requires GenerateInvite permission"))
     }
@@ -30,7 +34,7 @@ pub fn new_invite(state: &State<crate::config>, user: Token, input: Json<NewInvi
     let created_by = user.0.uid;
 
     match crate::invite::manager::generate_invite(created_by, user_flag, expires, uses) {
-        Ok(id) => Ok(Created::new(format!("{}/invite/{}", state.inner().hostname, id))),
+        Ok(id) => Ok( (CreatedInvite { url: format!("{}/invite/{}", state.inner().hostname, id) }).into() ),
         Err(_) => Err(ferr::q_err(500, "something went wrong"))
     }
 }

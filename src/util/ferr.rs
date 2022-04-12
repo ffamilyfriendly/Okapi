@@ -24,5 +24,5 @@ pub fn json_err(msg: String, code: String) -> String {
 }
 
 pub fn q_err(code: u16, msg: &str) -> Ferr {
-    Ferr { err_type: Status::new(code), err_msg: msg.to_string() }
+    Ferr { err_type: Status::new(code), err_msg: json_err(msg.to_string(), "error".into()) }
 }

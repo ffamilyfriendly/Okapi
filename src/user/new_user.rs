@@ -1,5 +1,5 @@
 //extern crate argon2;
-use crate::{util,config,invite, user};
+use crate::{util,Config,invite, user};
 use rocket::State;
 use rocket::response::status::{Created};
 use rocket::serde::json::Json;
@@ -23,7 +23,7 @@ pub struct NewUser {
 }
 
 #[post("/", data = "<input>")]
-pub fn new_user(state: &State<config> ,input: Json<NewUser>) -> Result<Created<String>, util::ferr::Ferr> {
+pub fn new_user(state: &State<Config> ,input: Json<NewUser>) -> Result<Created<String>, util::ferr::Ferr> {
     // Validates the request. If fields does not satisfy validation tell client to fix their shit
     input.validate().map_err(util::validate::verify_respond)?;
     
