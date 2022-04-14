@@ -20,6 +20,6 @@ pub fn get_invites(user: Token) -> Result<Json<Vec<manager::Invite>>, ferr::Ferr
         false => Some(user.0.uid)
     }) {
         Ok(v) => Ok(v.into()),
-        Err(_) => Err(ferr::q_err(500, "something went wrong"))
+        Err(_) => Err(ferr::q_err(500, "Something went wrong"))
     }
 }

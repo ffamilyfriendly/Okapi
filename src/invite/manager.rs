@@ -119,7 +119,7 @@ pub fn get_invites(creator: Option<u16>) -> Result<Vec<Invite>, rusqlite::Error>
         Ok(r) => r,
         Err(e) => return Err(e)
     };
-    
+
     let user_iter = match statement.query_map([], |row| get_invite_struct(row)) {
         Ok(r) => r,
         Err(e) => return Err(e)

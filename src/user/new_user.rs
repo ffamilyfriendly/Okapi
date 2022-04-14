@@ -23,12 +23,12 @@ pub struct NewUser {
 }
 
 #[post("/", data = "<input>")]
-pub fn new_user(state: &State<Config> ,input: Json<NewUser>) -> Result<Created<String>, util::ferr::Ferr> {
+pub fn new_user(state: &State<Config> ,input: Json<NewUser>) -> Result<String, util::ferr::Ferr> {
     // Validates the request. If fields does not satisfy validation tell client to fix their shit
     input.validate().map_err(util::validate::verify_respond)?;
     
     if state.inner().invite_only && input.invite.is_none() {
-        return Err(util::ferr::q_err(403, &util::ferr::json_err("invite only. Provide an invite code".into(), "inviteonly".into())))
+        return Err(util::ferr::q_err(403, "invite only"))
     }
 
     match user::manager::get_user(input.email.clone()) {
@@ -53,7 +53,7 @@ pub fn new_user(state: &State<Config> ,input: Json<NewUser>) -> Result<Created<S
     }
 
     match user::manager::new_user(input.email.clone(), input.username.clone(), input.password.clone(), user_flag) {
-        Some(_) => Ok(Created::new(format!("{}/user/me", &state.inner().hostname))),
+        Some(_) => Ok(util::ferr::json_err("Created".to_string(), "account was created successfully".to_string())),
         None => Err(util::ferr::q_err(500, "something went wrong"))
     }
 }
