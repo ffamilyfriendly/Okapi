@@ -1,7 +1,7 @@
 use crate::user::userutil::{ Token };
 use crate::util::{ permissions, ferr };
 use crate::content::{ manager };
-use rocket::response::status::Created;
+use rocket::response::status::NoContent;
 use serde::{ Deserialize, Serialize };
 use rocket::serde::json::Json;
 use rocket::State;
@@ -16,7 +16,7 @@ pub struct Entity {
 }
 
 #[post("/entity", data="<input>")]
-pub fn new_content(state: &State<crate::Config>, user: Token, input: Json<Entity>) -> Result<Created<String>, ferr::Ferr> {
+pub fn new_content(user: Token, input: Json<Entity>) -> Result<String, ferr::Ferr> {
     if !permissions::has_permission(user.0.permissions, permissions::UserPermissions::ManageContent) {
         return Err(ferr::q_err(403, "endpoint requires ManageContent permission"))
     }
@@ -30,18 +30,19 @@ pub fn new_content(state: &State<crate::Config>, user: Token, input: Json<Entity
         Err(e) => return Err(ferr::q_err(500, &e.to_string()))
     };
 
-    Ok(Created::new(format!("{}/content/entity/{}", state.inner().hostname, ent.id)))
+    
+    Ok(ferr::json_err(ent.id, "Created!".to_string()))
 }
 
 #[post("/metadata", data="<input>")]
-pub fn new_metadata(state: &State<crate::Config>, user: Token, input: Json<manager::MetaData>) -> Result<Created<String>, ferr::Ferr> {
+pub fn new_metadata(user: Token, input: Json<manager::MetaData>) -> Result<NoContent, ferr::Ferr> {
     if !permissions::has_permission(user.0.permissions, permissions::UserPermissions::ManageContent) {
         return Err(ferr::q_err(403, "endpoint requires ManageContent permission"))
     }
 
     match manager::generate_metadata(&input.parent, &input.thumbnail, &input.banner, &input.description, &input.name, input.rating, &input.age_rating, &input.language, input.year) {
-        Ok(_) => Ok(Created::new(format!("{}/content/metadata/{}", state.inner().hostname, input.parent))),
-        Err(_) => Err(ferr::q_err(500, "something went wrong"))
+        Ok(_) => Ok(NoContent),
+        Err(e) => Err(ferr::q_err(500, &e.to_string()))
     }
 }
 
@@ -53,13 +54,13 @@ pub struct Source {
 }
 
 #[post("/source", data="<input>")]
-pub fn new_source(state: &State<crate::Config>, user: Token, input: Json<Source>) -> Result<String, ferr::Ferr> {
+pub fn new_source(state: &State<crate::Config>, user: Token, input: Json<Source>) -> Result<NoContent, ferr::Ferr> {
     if !permissions::has_permission(user.0.permissions, permissions::UserPermissions::ManageContent) {
         return Err(ferr::q_err(403, "endpoint requires ManageContent permission"))
     }
 
     match manager::generate_source(&input.parent, &input.path, input.position) {
-        Ok(_) => Ok(format!("{}/content/source/{}", state.inner().hostname, input.parent)),
+        Ok(_) => Ok(NoContent),
         Err(_) => Err(ferr::q_err(500, "something went wrong"))
     }
 }
