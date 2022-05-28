@@ -29,9 +29,15 @@ pub fn get_multiple(user: Option<Token>, parent: String) -> Result<Json<Vec<mana
         false => true
     };
 
-    match manager::get_collection_list(&parent, public) {
-        Ok(v) => Ok(v.into()),
-        Err(_) => Err(ferr::q_err(500, "something went wrong"))
+    match parent.clone() == "all" {
+        true => match manager::get_collection_all(public) {
+            Ok(v) => Ok(v.into()),
+            Err(_) => Err(ferr::q_err(500, "something went wrong"))
+        },
+        false => match manager::get_collection_list(&parent, public) {
+            Ok(v) => Ok(v.into()),
+            Err(_) => Err(ferr::q_err(500, "something went wrong"))
+        }
     }
 }
 
