@@ -73,3 +73,11 @@ pub fn search_collections(user: Option<Token>, name: Option<String>, description
         Err(e) => Err(ferr::q_err(500, &e.to_string()))
     }
 }
+
+#[get("/source/<source>/info")]
+pub fn get_source_info(source: String) -> Result<Json<manager::DetailedSource>, ferr::Ferr> {
+    match manager::get_detailed_source(source) {
+        Some(v) => Ok(v.into()),
+        None => Err(ferr::q_err(404, "not found"))
+    }
+}

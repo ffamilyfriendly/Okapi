@@ -1,6 +1,10 @@
 use serde::{Deserialize, Serialize};
 use rusqlite::{ Connection };
 use crate::util::gen_id::{gen_id};
+use std::fs;
+use std::io::{BufReader};
+use mp4;
+use mp3_duration;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum EntityType {
@@ -48,6 +52,13 @@ pub struct Source {
     pub parent: String,
     pub path: String,
     pub position: u16
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct DetailedSource {
+    api_entity: Source, // The source information stored in the database
+    file_size: u64, // Size of linked source media file in mb
+    playback_length: f64 // how "long" the media itself is
 }
 
 #[derive(Serialize, Deserialize)]
@@ -230,6 +241,40 @@ pub fn get_source(id: String) -> Option<Source> {
         Ok(e) => Some(e),
         Err(_) => None
     }
+}
+
+pub fn get_detailed_source(id: String) -> Option<DetailedSource> {
+    let src = match get_source(id) {
+        Some(v) => v,
+        None => return None
+    };
+    let x = match fs::metadata(&src.path) {
+        Ok(v) => v,
+        Err(_) => return None
+    };
+
+    let mut playback_len: f64 = 0.0;
+
+    // handle getting of playback length for media files
+    // if no supported method exists for getting playback length api will simply return 0
+    if src.path.ends_with(".mp3") {
+        match mp3_duration::from_path(&src.path) {
+            Ok(v) => playback_len = v.as_secs_f64(),
+            Err(_) => { }
+        }
+    }
+    else if src.path.ends_with(".mp4") {
+        let f = fs::File::open(&src.path).unwrap();
+        let size = x.len();
+        let reader = BufReader::new(f);
+
+        match mp4::Mp4Reader::read_header(reader, size) {
+            Ok(v) => playback_len = v.duration().as_secs_f64(),
+            Err(_) => { }
+        }
+    }
+
+    Some( DetailedSource { api_entity: src, playback_length: playback_len, file_size: x.len() } )
 }
 
 pub fn get_public_entity(id: String) -> Option<Entity> {

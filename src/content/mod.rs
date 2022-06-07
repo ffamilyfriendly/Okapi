@@ -14,6 +14,8 @@ pub fn routes() -> Vec<Route> {
         // Get content
         get_content::get_content, get_content::get_multiple, get_content::get_sources, get_content::search_collections,
         // Deletion of content
-        delete_content::delete_entity, delete_content::delete_metadata, delete_content::delete_source, delete_content::delete_sources
+        delete_content::delete_entity, delete_content::delete_metadata, delete_content::delete_source, delete_content::delete_sources,
+        // Sources
+        get_content::get_source_info, 
     ]
 }
