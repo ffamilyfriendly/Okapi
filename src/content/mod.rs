@@ -4,6 +4,7 @@ pub mod new_content;
 pub mod get_content;
 pub mod delete_content;
 pub mod edit_content;
+pub mod multipart;
 
 pub fn routes() -> Vec<Route> {
     routes![

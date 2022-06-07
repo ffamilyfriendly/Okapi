@@ -2,6 +2,7 @@ use crate::user::userutil::{ Token };
 use crate::util::{ permissions, ferr };
 use crate::content::{ manager };
 use rocket::serde::json::Json;
+extern crate rocket;
 
 #[get("/<id>")]
 pub fn get_content(user: Option<Token>, id: String) -> Result<Json<manager::Entity>, ferr::Ferr> {
@@ -80,4 +81,10 @@ pub fn get_source_info(source: String) -> Result<Json<manager::DetailedSource>, 
         Some(v) => Ok(v.into()),
         None => Err(ferr::q_err(404, "not found"))
     }
+}
+
+#[get("/source/<source>/media")]
+pub fn get_source_media(source: String) -> Result<String, ferr::Ferr> {
+    manager::get_source(source.clone());
+    Ok("a".to_string())
 }
