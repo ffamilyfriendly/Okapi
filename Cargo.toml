@@ -16,7 +16,7 @@ rmp-serde = { git = "https://github.com/3Hren/msgpack-rust", rev = "5bf2c24203ad
 rusqlite = "0.26.0"
 
 # rocket
-rocket = { version = "0.5.0-rc.1", features = ["json"] }
+rocket = { version = "0.5.0-rc.2", features = ["json"] }
 
 # Auth
 argon2 = "0.3"
@@ -26,3 +26,5 @@ jsonwebtoken = "7"
 # media length
 mp3-duration = "0.1.10"
 mp4 = "0.11.0"
+
+rocket_seek_stream = {git="https://github.com/StappsWorld/rocket_seek_stream"}

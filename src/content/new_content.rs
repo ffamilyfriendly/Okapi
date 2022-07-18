@@ -4,7 +4,6 @@ use crate::content::{ manager };
 use rocket::response::status::NoContent;
 use serde::{ Deserialize, Serialize };
 use rocket::serde::json::Json;
-use rocket::State;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Entity {
@@ -54,7 +53,7 @@ pub struct Source {
 }
 
 #[post("/source", data="<input>")]
-pub fn new_source(state: &State<crate::Config>, user: Token, input: Json<Source>) -> Result<NoContent, ferr::Ferr> {
+pub fn new_source(user: Token, input: Json<Source>) -> Result<NoContent, ferr::Ferr> {
     if !permissions::has_permission(user.0.permissions, permissions::UserPermissions::ManageContent) {
         return Err(ferr::q_err(403, "endpoint requires ManageContent permission"))
     }

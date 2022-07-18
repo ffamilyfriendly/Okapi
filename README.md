@@ -52,6 +52,6 @@
     - [X] metadata
     - [X] combined
   - File transfer 
-    - [ ] send file
-    - [ ] send partials
-    - [ ] check public/private content. Do not send private content to non-user
+    - [X] send file
+    - [X] send partials
+    - [X] check public/private content. Do not send private content to non-user

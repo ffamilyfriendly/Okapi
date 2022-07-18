@@ -1,7 +1,6 @@
 //extern crate argon2;
 use crate::{util,Config,invite, user};
 use rocket::State;
-use rocket::response::status::{Created};
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 use validator::Validate;

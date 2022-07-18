@@ -4,7 +4,6 @@ pub mod new_content;
 pub mod get_content;
 pub mod delete_content;
 pub mod edit_content;
-pub mod multipart;
 
 pub fn routes() -> Vec<Route> {
     routes![
@@ -17,6 +16,6 @@ pub fn routes() -> Vec<Route> {
         // Deletion of content
         delete_content::delete_entity, delete_content::delete_metadata, delete_content::delete_source, delete_content::delete_sources,
         // Sources
-        get_content::get_source_info, 
+        get_content::get_source_info, get_content::get_source_media
     ]
 }
