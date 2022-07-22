@@ -88,6 +88,11 @@ pub struct Entity {
     pub next: Option<String>
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct LastWatched {
+    pub timestamp: f64
+}
+
 fn get_conn() -> Result<Connection, rusqlite::Error> {
     Connection::open("data.sqlite")
 }
@@ -187,6 +192,26 @@ fn get_entity_struct(row: &rusqlite::Row<'_>) -> Result<Entity, rusqlite::Error>
             sources: None
         }
     )
+}
+
+fn get_lastwatched_struct(row: &rusqlite::Row<'_>) -> Result<LastWatched, rusqlite::Error> {
+    Ok(
+        LastWatched {
+            timestamp: row.get(3)?
+        }
+    )
+}
+
+pub fn get_last_watched(id: String, uid: u16) -> Option<LastWatched> {
+    let con = match get_conn() {
+        Ok(c) => c,
+        Err(_) => return None
+    };
+
+    match con.query_row("SELECT * FROM lastwatched WHERE cid = ? AND uid = ?", [id, uid.to_string()], |row| get_lastwatched_struct(row)) {
+        Ok(e) => Some(e),
+        Err(_) => return None
+    }
 }
 
 pub fn get_metadata(id: String) -> Option<MetaData> {
@@ -455,6 +480,21 @@ pub fn generate_entity(flag: u16, entity_type: EntityType, creator_uid: u16, pos
                     sources: None,
                     metadata: None,
                     next: next
+                }
+            )
+        },
+        Err(e) => Err(e)
+    }
+}
+
+pub fn generate_last_watched(id: String, uid: u16, timestamp: f64) -> Result<LastWatched, rusqlite::Error> {
+    let con = get_conn()?;
+    let lwid = id.clone() + &uid.to_string();
+    match con.execute("INSERT OR REPLACE INTO lastwatched VALUES(?,?,?,?)", [lwid, id, uid.to_string(), timestamp.to_string()]) {
+        Ok(_) => {
+            Ok(
+                LastWatched {
+                    timestamp: timestamp
                 }
             )
         },

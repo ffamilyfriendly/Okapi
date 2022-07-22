@@ -26,7 +26,7 @@
 
 *below postponed until working player on frontend*
 - [ ] Watch History (per user)
-  - [ ] keep track of current time for entity
+  - [X] keep track of current time for entity
   - [ ] remove current time for entity
   - [ ] store session(s)? start time -> end time
 

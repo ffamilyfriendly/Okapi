@@ -82,3 +82,12 @@ pub fn edit_source(user: Token, input: Json<Source>, id: String) -> Result<NoCon
         Err(_) => Err(ferr::q_err(500, "something went wrong"))
     }
 }
+
+#[patch("/lastwatched/<id>", data = "<input>")]
+pub fn get_last_watched(user: Token, id: String, input: Json<manager::LastWatched>) -> Result<NoContent, ferr::Ferr> {
+
+    match manager::generate_last_watched(id, user.0.uid, input.timestamp) {
+        Ok(_) => Ok(NoContent),
+        Err(_) => Err(ferr::q_err(500, "something went wrong"))
+    }
+}

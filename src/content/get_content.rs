@@ -2,6 +2,7 @@ use crate::user::userutil::{ Token };
 use crate::util::{ permissions, ferr };
 use crate::content::{ manager };
 use rocket::serde::json::Json;
+use std::fs;
 // massive props to github @ryds and @StappsWorld for this lovely crate (https://github.com/StappsWorld/rocket_seek_stream)
 use rocket_seek_stream::SeekStream;
 extern crate rocket;
@@ -106,4 +107,38 @@ pub fn get_source_media<'a>(source: String, key: Option<String>) -> Result<std::
     
 
     Ok(SeekStream::from_path(src.path))
+}
+
+#[get("/files?<dir>")]
+pub fn get_files_in_dir(user: Token, dir: String) -> Result<Json<Vec<String>>, ferr::Ferr> {
+    match permissions::has_permission(user.0.permissions, permissions::UserPermissions::ManageContent) {
+        true => { },
+        false => return Err(ferr::q_err(403, "no chief"))
+    };
+
+    let mut files: Vec<String> = Vec::new();
+
+    match fs::read_dir(dir) {
+        Ok(paths) => {
+            for path in paths {
+                match path {
+                    Ok(p) => {
+                        files.push(p.path().display().to_string())
+                    },
+                    Err(_) => { }
+                }
+            }
+        },
+        Err(_) => return Err(ferr::q_err(500, "something went wrong"))
+    };
+
+    Ok(files.into())
+}
+
+#[get("/<id>/lastwatched")]
+pub fn get_last_watched(user: Token, id: String) -> Option<Json<manager::LastWatched>> {
+    match manager::get_last_watched(id, user.0.uid) {
+        Some(v) => Some(v.into()),
+        None => None
+    }
 }

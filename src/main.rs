@@ -100,6 +100,14 @@ fn rocket() -> _ {
                     PRIMARY KEY(id)
                 );
 
+                CREATE TABLE IF NOT EXISTS lastwatched (
+                    id TEXT NOT NULL UNIQUE,
+                    cid TEXT NOT NULL,
+                    uid TEXT NOT NULL,
+                    timestamp REAL NOT NULL,
+                    PRIMARY KEY(id)
+                );
+
                 CREATE TABLE IF NOT EXISTS sessions (
                     token TEXT NOT NULL UNIQUE,
                     user INTEGER NOT NULL,
