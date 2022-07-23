@@ -36,6 +36,7 @@ pub mod util;
 pub mod user;
 pub mod invite;
 pub mod content;
+pub mod metadata;
 //mod content;
 
 // cors
@@ -127,6 +128,7 @@ fn rocket() -> _ {
         .mount("/user", user::routes())
         .mount("/invite", invite::routes())
         .mount("/content", content::routes())
+        .mount("/metadata", metadata::routes())
         .attach(cors::CORS)
         .manage(cnf)
 }
