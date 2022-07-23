@@ -4,6 +4,6 @@ pub mod manager;
 
 pub fn routes() -> Vec<Route> {
     routes![
-        get_metadata::search_metadata
+        get_metadata::search_metadata, get_metadata::search_movie_metadata
     ]
 }

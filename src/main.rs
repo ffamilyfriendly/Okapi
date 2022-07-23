@@ -8,7 +8,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Serialize)]
 pub struct Config {
     hostname: String,
-    invite_only: bool
+    invite_only: bool,
+    tmdb_key: String
 }
 
 pub fn get_config() -> Config {
