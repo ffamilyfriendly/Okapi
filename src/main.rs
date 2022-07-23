@@ -28,7 +28,11 @@ use rocket::serde::json::Json;
 
 #[get("/")]
 pub fn get_config_http() -> Json<Config> {
-    get_config().into()
+
+    let mut conf: Config = get_config();
+    conf.tmdb_key = "SECRET".to_string();
+
+    conf.into()
 }
 
 // Utils
