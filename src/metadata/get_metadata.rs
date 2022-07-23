@@ -33,6 +33,6 @@ pub async fn search_movie_metadata(user: Token, query: String, state: &State<Con
 
     match manager::get_movie_metadata(query, &state.tmdb_key).await {
         Ok(v) => Ok(v.into()),
-        Err(e) => Err(ferr::q_err(500, &e.to_string()))
+        Err(e) => Err(ferr::q_err(501, &e.to_string()))
     }
 }

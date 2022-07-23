@@ -42,7 +42,7 @@ pub async fn get_audio_metadata(query: String) -> Result<Vec<content_manager::Me
                     banner: "https://www.storytel.com".to_string() + &book.book.largeCover,
                     description: v.description,
                     name: book.book.name,
-                    rating: book.book.grade,
+                    rating: book.book.grade * 2.0,
                     age_rating: "i am adolt".to_string(),
                     language: "English".to_string(),
                     year: v.releaseDate[..4].to_string().parse().unwrap_or(1984)
@@ -78,6 +78,14 @@ pub async fn get_movie_metadata(query: String, api_key: &String) -> Result<Vec<c
     let mut meta_list: Vec<content_manager::MetaData> = Vec::new();
 
     for movie in resp.results {
+
+        fn getYear(rd: String) -> u16 {
+            if &rd.chars().count() < &4 {
+                return 1984
+            }
+            rd[..4].to_string().parse().unwrap_or(1337)
+        }
+
         let as_metadata = content_manager::MetaData {
             parent: "yeet".to_string(),
             thumbnail: "https://image.tmdb.org/t/p/w500".to_string() + &movie.poster_path.unwrap_or("".to_string()),
@@ -87,7 +95,7 @@ pub async fn get_movie_metadata(query: String, api_key: &String) -> Result<Vec<c
             rating: movie.vote_average,
             age_rating: "lol".to_string(),
             language: movie.original_language,
-            year: movie.release_date[..4].to_string().parse().unwrap_or(1337)
+            year: getYear(movie.release_date)
         };
 
         meta_list.push(as_metadata);

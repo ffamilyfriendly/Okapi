@@ -1,5 +1,5 @@
 {
     "hostname": "http://localhost:3000",
     "invite_only": true,
-    "tmdb_key": "key"
+    "tmdb_key": "k"
 }
